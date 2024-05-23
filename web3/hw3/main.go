@@ -33,35 +33,22 @@ type Bag struct {
 	ligther bool
 }
 
-type ScanTest struct {
-	text string
-	in   bool
-	out  bool
-}
-
 func (p Person) wakeUp() {
-	fmt.Printf("%v woke ups in a cave. He remember nothing. Help him get home\n", p.name )
+	fmt.Printf("%v woke up in a cave. He remember nothing. Help him get home\n", p.name )
 }
 
-func (p Person) goFromCave(){
-	i := true
-	if i == true {
-		fmt.Printf("Great. Now %v will try to find home\n", p.name)
-	}
-}
-
-func (p Person) answear(){
-	var answear string
-	fmt.Println("Do you wanna go out of cave?")
+func (p Person) outFromCave(){
+	var answear bool
+	fmt.Println("Do you wanna go out of cave? ('true' or 'false')")
 
 	_, err := fmt.Scan(&answear)
 	if err != nil {
-		fmt.Println("Choose: 'yes' or 'no'")
+		fmt.Println("Choose: 'true' or 'false'")
 		return
 	}
 
-	if answear == "yes" {
-		fmt.Println("Let's go futher")
+	if answear == true {
+		fmt.Printf("Great. Now %v will try to find his home\n", p.name)
 	} else {
 		fmt.Println("Game is over")
 	}
@@ -75,9 +62,6 @@ func main(){
 	}
 
 	p.wakeUp()
-	p.answear()
-	p.goFromCave()
-
-
+	p.outFromCave()
 
 }
