@@ -49,12 +49,12 @@ func (p Person) choose(question string) bool {
 
 func (p Person) moveForward() bool {
 	if p.choose("Do you want to go out of the cave? (true or false)") {
-		if p.choose("Do you need lighter for this?"){
+		if p.choose("Do you need lighter for this?") {
 			fmt.Printf("Great. Now %v will try to find his home\n", p.name)
-			return true 
-		} 
-	fmt.Printf("%v can't find his way in the dark:( Game over:(", p.name)
-	return false
+			return true
+		}
+		fmt.Printf("%v can't find his way in the dark:( Game over:(", p.name)
+		return false
 	} else {
 		fmt.Printf("%v will never get home. Game is over:(\n", p.name)
 		return false
@@ -70,9 +70,9 @@ func (p Person) deadAnimal(b Bag) bool {
 	} else {
 		fmt.Println("Greate choose. It was poison animal. Let's go futher")
 		return true
-		}
-		return true
 	}
+	return true
+}
 
 func (p Person) resting(b Bag) bool {
 	if p.choose("You look tired. I see empty camping. Do you wanna take a rest?(true or false)") {
@@ -83,7 +83,7 @@ func (p Person) resting(b Bag) bool {
 			if p.choose("I see some safe. Do you wanna open it? (true or false)") {
 				fmt.Printf("Oh no...%v was bitten by a big insect and it was poisonous. Game is over:(", p.name)
 				return false
-			} 
+			}
 		}
 	} else {
 		fmt.Printf("It was long road, but %v get home! Congradulation!")
@@ -97,13 +97,13 @@ func main() {
 		fmt.Println("Game: New World!")
 
 		p := Person{
-		name: "Steven",
+			name: "Steven",
 		}
 
 		b := Bag{
-		contain1: "match",
-		contain2: "knife",
-		contain3: "lighter",
+			contain1: "match",
+			contain2: "knife",
+			contain3: "lighter",
 		}
 
 		p.wakeUp(b)
@@ -131,3 +131,5 @@ func main() {
 		}
 	}
 }
+
+//comment
