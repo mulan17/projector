@@ -19,20 +19,32 @@
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Person struct {
 	name string
 }
 
 type Bag struct {
-	contain1 string
-	contain2 string
-	contain3 string
+	items map[string]bool
+}
+
+func (b *Bag) hasItem(item string) bool {
+	return b.items[item]
+}
+
+func (b *Bag) useItem(item string) bool {
+	if b.hasItem(item) {
+		b.items[item] = false
+		return true
+	}
+	return false
 }
 
 func (p Person) wakeUp(b Bag) {
-	fmt.Printf("%v woke up in a cave. He remembers nothing. He has the bag with %v, %v, %v. Help him get home.\n", p.name, b.contain1, b.contain2, b.contain3)
+	fmt.Printf("%v woke up in a cave. He remembers nothing. He has a bag with some items.\n", p.name)
 }
 
 func (p Person) choose(question string) bool {
@@ -43,17 +55,21 @@ func (p Person) choose(question string) bool {
 		if err == nil {
 			return answer
 		}
-		// fmt.Println("Choose: 'true' or 'false'")
 	}
 }
 
-func (p Person) moveForward() bool {
+func (p Person) moveForward(b *Bag) bool {
 	if p.choose("Do you want to go out of the cave? (true or false)") {
-		if p.choose("Do you need lighter for this?") {
-			fmt.Printf("Great. Now %v will try to find his home\n", p.name)
-			return true
+		if p.choose("Do you need a lighter for this? (true or false)") {
+			if b.useItem("lighter") {
+				fmt.Printf("Great. Now %v will try to find his home\n", p.name)
+				return true
+			} else {
+				fmt.Printf("%v doesn't have a lighter. Game over:(\n", p.name)
+				return false
+			}
 		}
-		fmt.Printf("%v can't find his way in the dark:( Game over:(", p.name)
+		fmt.Printf("%v can't find his way in the dark:( Game over:(\n", p.name)
 		return false
 	} else {
 		fmt.Printf("%v will never get home. Game is over:(\n", p.name)
@@ -61,32 +77,41 @@ func (p Person) moveForward() bool {
 	}
 }
 
-func (p Person) deadAnimal(b Bag) bool {
-	if p.choose("On his road Stiven sees a super strange animal on his road. Do you wanna touch it? (true or false)") {
-		if p.choose("Do you need knife for this? (true or false)") {
-			fmt.Printf("Animal was poison. %v will never get home. Game is over:(\n", p.name)
-			return false
+func (p Person) deadAnimal(b *Bag) bool {
+	if p.choose("On his road Steven sees a super strange animal. Do you wanna touch it? (true or false)") {
+		if p.choose("Do you need a knife for this? (true or false)") {
+			if b.useItem("knife") {
+				fmt.Printf("The animal was poisonous. %v will never get home. Game is over:(\n", p.name)
+				return false
+			} else {
+				fmt.Printf("%v doesn't have a knife. He avoids touching the animal and moves on.\n", p.name)
+				return true
+			}
 		}
 	} else {
-		fmt.Println("Greate choose. It was poison animal. Let's go futher")
+		fmt.Println("Great choice. It was a poisonous animal. Let's go further")
 		return true
 	}
 	return true
 }
 
-func (p Person) resting(b Bag) bool {
-	if p.choose("You look tired. I see empty camping. Do you wanna take a rest?(true or false)") {
+func (p Person) resting(b *Bag) bool {
+	if p.choose("You look tired. I see an empty camping. Do you wanna take a rest? (true or false)") {
 		fmt.Println("Ok, let's take a rest. Here is super dark and cold...")
-		// if p.choose(fmt.Sprintf("Do you wanna take %s to make fire?"), b.contain1) {
-		if p.choose("Do you wanna take match to make fire?") {
-			fmt.Println("Now it's beter...Look I see something")
-			if p.choose("I see some safe. Do you wanna open it? (true or false)") {
-				fmt.Printf("Oh no...%v was bitten by a big insect and it was poisonous. Game is over:(", p.name)
+		if p.choose("Do you wanna take matches to make fire? (true or false)") {
+			if b.useItem("match") {
+				fmt.Println("Now it's better... Look, I see something")
+				if p.choose("I see a safe. Do you wanna open it? (true or false)") {
+					fmt.Printf("Oh no... %v was bitten by a big insect and it was poisonous. Game is over:(\n", p.name)
+					return false
+				}
+			} else {
+				fmt.Printf("%v doesn't have matches. It's too cold to rest here. Game over:(\n", p.name)
 				return false
 			}
 		}
 	} else {
-		fmt.Printf("It was long road, but %v get home! Congradulation!")
+		fmt.Printf("It was a long road, but %v gets home! Congratulations!\n", p.name)
 		return true
 	}
 	return true
@@ -101,35 +126,34 @@ func main() {
 		}
 
 		b := Bag{
-			contain1: "match",
-			contain2: "knife",
-			contain3: "lighter",
+			items: map[string]bool{
+				"match":   true,
+				"knife":   true,
+				"lighter": true,
+			},
 		}
 
 		p.wakeUp(b)
-		if !p.moveForward() {
+		if !p.moveForward(&b) {
 			if !p.choose("Do you want to start over? (true or false)") {
 				break
 			}
 			continue
 		}
-		if !p.deadAnimal(b) {
+		if !p.deadAnimal(&b) {
 			if !p.choose("Do you want to start over? (true or false)") {
 				break
 			}
 			continue
 		}
-		if !p.resting(b) {
+		if !p.resting(&b) {
 			if !p.choose("Do you want to start over? (true or false)") {
 				break
 			}
 			continue
 		}
-		fmt.Println("Do you want to play again? (true or false)")
 		if !p.choose("Do you want to play again? (true or false)") {
 			break
 		}
 	}
 }
-
-//comment
