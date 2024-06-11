@@ -1,4 +1,4 @@
-//Імплементувати пошук для текстового редактора (аналогічно до завдання в HW4) використовуючи індекс слів у мапі. 
+//Імплементувати пошук для текстового редактора (аналогічно до завдання в HW4) використовуючи індекс слів у мапі.
 //Тобто, для текстового редактора реалізувати методи "проіндексувати текст по словам", та "пошук усіх рядків за словом".
 
 //імплементувати словник англ - укр. Користувач вводить слово, програма - переклад
@@ -7,6 +7,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"os"
 	"strings"
@@ -27,16 +28,45 @@ func readFromFile(myfile string) ([]string, error) {
 	return slice, scanner.Err()
 }
 
+func indexInText(slice []string) map[string][]int {
+	index := make(map[string][]int)
+	for i, line := range slice {
+		words := strings.Fields(line)
+		for _, word := range words {
+			index[word] = append(index[word], i)
+		}
+	}
+	return index
+}
+
+func searchLines(index map[string][]int, slice []string, word string) []string {
+	numberLine, found := index[word]
+	if !found {
+		return nil
+	}
+
+	var results []string
+	for _, numberLine := range numberLine {
+		results = append(results, slice[numberLine])
+	}
+	return results
+}
+
 func main() {
-	myfile := "file1.txt" // open the file
-	slice, err := readFromFile(myfile)
+	myfile := flag.String("file", "file1.txt", "File path entering")
+	searchWord := flag.String("так", "", "Searching word")
+
+	flag.Parse()
+
+	slice, err := readFromFile(*myfile)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
 		return
 	}
 
-	// searchWord := "так"
-	// results := searchLines(slice, searchWord)
+	index := indexInText(slice)
+
+	results := searchLines(index, slice, *searchWord)
 
 	if len(results) > 0 {
 		fmt.Println("Results of searching:")
