@@ -17,13 +17,7 @@ type Struct struct {
 }
 
 
-func sortID(slice []Struct) {
-	sort.Slice(slice, func(i, j int) bool{
-		return slice[i].ID < slice[j].ID
-	})
-}
-
-func unique(slice []Struct) []Struct {
+func uniqueSorted(slice []Struct) []Struct {
 	if len(slice) == 0 {
 		return slice
 	}
@@ -53,8 +47,22 @@ func main() {
 
 	}
 	
-	sortID(sliceID)
-	result := unique(sliceID)
+	// func sortID(slice []Struct) {
+	// 	sort.Slice(slice, func(i, j int) bool{
+	// 		return slice[i].ID < slice[j].ID
+	// 	})
+	// }
+
+	// sortID(sliceID)
+	// result := unique(sliceID)
+
+	//перенесла сюди сортування
+	sort.Slice(sliceID, func(i, j int) bool {
+		return sliceID[i].ID < sliceID[j].ID
+	})
+	
+	//і тут вже сортую унікальні
+	result := uniqueSorted((sliceID))
 
 	fmt.Println("Sorted and Unique IDs:")
 	for _, number := range result {
