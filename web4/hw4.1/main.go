@@ -7,6 +7,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"os"
 	"strings"
@@ -38,8 +39,13 @@ func searchLines(slice []string, searchWord string) []string {
 }
 
 func main() {
-	myfile := "file1.txt" // open the file
-	slice, err := readFromFile(myfile)
+	// myfile := "file1.txt" // open the file
+	myfile := flag.String("file", "file1.txt", "File path entering")
+	searchWord := flag.String("так", "", "Searching word")
+
+	flag.Parse()
+
+	slice, err := readFromFile(*myfile)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
 		return
@@ -53,8 +59,8 @@ func main() {
 	// }
 	//fmt.Println(Slice)
 
-	searchWord := "так"
-	results := searchLines(slice, searchWord)
+	// searchWord := "так"
+	results := searchLines(slice, *searchWord)
 
 	if len(results) > 0 {
 		fmt.Println("Results of searching:")
