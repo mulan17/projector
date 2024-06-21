@@ -2,18 +2,23 @@ package route
 
 import (
     "fmt"
-    "hw6/public-transport"
 )
 
+type PublicTransport interface {
+    GetPassengers(passengerNumber int)
+    PushPassengers(passengerNumber int)
+    TransportName() string
+}
+
 type Route struct {
-    transports []transport.PublicTransport
+    transports []PublicTransport
 }
 
 func NewRoute() *Route {
     return &Route{}
 }
 
-func (r *Route) AddTransport(t transport.PublicTransport) {
+func (r *Route) AddTransport(t PublicTransport) {
     r.transports = append(r.transports, t)
 }
 
