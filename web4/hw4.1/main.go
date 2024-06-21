@@ -41,7 +41,7 @@ func searchLines(slice []string, searchWord string) []string {
 func main() {
 	// myfile := "file1.txt" // open the file
 	myfile := flag.String("file", "file1.txt", "File path entering")
-	searchWord := flag.String("так", "", "Searching word")
+	searchWord := flag.String("search", "", "Searching word")
 
 	flag.Parse()
 
