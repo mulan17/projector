@@ -1,0 +1,8 @@
+{
+    "array": [
+        "1",
+        "2"
+    ],
+    "stringField": "some value",
+    "intField": 1
+}
