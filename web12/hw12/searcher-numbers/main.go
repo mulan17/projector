@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	const filename = "/Users/anastasiya/Downloads/1689007675141_numbers.txt"
+	const filename = "Users/anastasiya/Documents/projector/web12/hw12/texts/1689007675141_numbers.txt"
 
 	file, err := os.Open(filename)
 	if err != nil {
@@ -23,7 +23,7 @@ func main() {
 		log.Fatal().Err(err).Msg("Failed to read file")
 	}
 
-	phoneRegex := regexp.MustCompile(`\b(\d{10}|\(\d{3}\)\s?\d{3}-\d{4}|\(\d{3}\)\d{3}-\d{4}|\d{3}-\d{3}-\d{4}|\d{3}\.\d{3}\.\d{4}|\d{3}\s\d{3}\s\d{4})\b`)
+	phoneRegex := regexp.MustCompile(`\b(\d{3}[-\s]?\d{3}[-\s]?\d{4})\b`)
 
 	phoneNumbers := phoneRegex.FindAllString(string(content), -1)
 
