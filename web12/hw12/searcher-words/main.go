@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	const filename = "/Users/anastasiya/Downloads/1689007676028_text.txt"
+	const filename = "/Users/anastasiya/Documents/projector/web12/hw12/texts/1689007676028_text.txt"
 
 	file, err := os.Open(filename)
 	if err != nil {
@@ -23,7 +23,7 @@ func main() {
 		log.Fatal().Err(err).Msg("Failed to read file")
 	}
 
-	wordRegex := regexp.MustCompile(`\b[аеєиіїоуюяAEIOUYаеєиіїоуюя]*[аеєиіїоуюяAEIOUYаеєиіїоуюя]$`)
+	wordRegex := regexp.MustCompile(`\p{L}+`)
 
 	words := wordRegex.FindAllString(string(content), -1)
 
