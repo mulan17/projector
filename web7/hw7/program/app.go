@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"sync"
 	"time"
 )
 
@@ -11,34 +12,59 @@ func main() {
 
 	numChannel := make(chan int)
 	avgChannel := make(chan float64)
+	done := make(chan struct{})
 
-	go generateNumbers(numChannel)
-	go calculateAverage(numChannel, avgChannel)
-	go printAverage(avgChannel)
+	var s sync.WaitGroup
+	s.Add(3)
+
+	go generateNumbers(&s, numChannel, done)
+	go calculateAverage(&s, numChannel, avgChannel, done)
+	go printAverage(&s, avgChannel)
 
 	time.Sleep(5 * time.Second)
+	close(done)
+	s.Wait()
 }
 
-func generateNumbers(ch chan<- int) {
+func generateNumbers(s *sync.WaitGroup, ch chan<- int, done <-chan struct{}) {
+	defer s.Done()
 	for {
-		num := rand.Intn(100)
-		fmt.Println("Generated number:", num)
-		ch <- num
-		time.Sleep(500 * time.Millisecond)
+		select {
+		case <-done:
+			close(ch)
+			return
+		default:
+			num := rand.Intn(100)
+			fmt.Println("Generated number:", num)
+			ch <- num
+			time.Sleep(500 * time.Millisecond)
+		}
 	}
 }
 
-func calculateAverage(numCh <-chan int, avgCh chan<- float64) {
+func calculateAverage(s *sync.WaitGroup, numCh <-chan int, avgCh chan<- float64, done <-chan struct{}) {
+	defer s.Done()
 	var sum, count int
-	for num := range numCh {
-		sum += num
-		count++
-		avg := float64(sum) / float64(count)
-		avgCh <- avg
+	for {
+		select {
+		case <-done:
+			close(avgCh)
+			return
+		case num, ok := <-numCh:
+			if !ok {
+				close(avgCh)
+				return
+			}
+			sum += num
+			count++
+			avg := float64(sum) / float64(count)
+			avgCh <- avg
+		}
 	}
 }
 
-func printAverage(ch <-chan float64) {
+func printAverage(s *sync.WaitGroup, ch <-chan float64) {
+	defer s.Done()
 	for avg := range ch {
 		fmt.Println("Average:", avg)
 	}
