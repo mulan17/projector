@@ -23,7 +23,8 @@ func main() {
 		log.Fatal().Err(err).Msg("Failed to read file")
 	}
 
-	phoneRegex := regexp.MustCompile(`\b(\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4})\b`)
+	phoneRegex := regexp.MustCompile(`\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}`)
+	
 
 	phoneNumbers := phoneRegex.FindAllString(string(content), -1)
 
