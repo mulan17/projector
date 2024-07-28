@@ -15,7 +15,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"passwords/passwords"
+	"hw13/internal/passwords"
 )
 
 func main() {
