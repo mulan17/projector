@@ -2,6 +2,7 @@ package makeup
 
 import (
 	"errors"
+	"time"
 
 	"github.com/rs/zerolog/log"
 )
@@ -21,6 +22,15 @@ func NewService(s storage) *Service {
 	return &Service{s: s}
 }
 
+func (s *Service) getPrice(product Product) int {
+    currentHour := time.Now().Hour()
+    if currentHour >= 18 {
+        return int(float64(product.Price) * 1.10) 
+    }
+    return product.Price
+}
+
+
 func (s *Service) GetProducts() []Product {
 	return s.s.GetAllProducts()
 }
@@ -31,7 +41,7 @@ func (s *Service) PlaceOrder(productID string, quantity int) (Order, error) {
 		return Order{}, errors.New("product not found")
 	}
 
-	totalPrice := product.Price * quantity
+	totalPrice :=  s.getPrice(product) * quantity
 	order := NewOrder(productID, quantity, totalPrice)
 	s.s.CreateOrder(order)
 
