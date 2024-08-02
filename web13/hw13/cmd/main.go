@@ -12,64 +12,66 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"hw13/internal/passwords"
 )
 
 func main() {
+	if len(os.Args) < 2 {
+		fmt.Println("Usage:")
+		fmt.Println("./pass-manager set <name> <password>")
+		fmt.Println("./pass-manager get <name>")
+		fmt.Println("./pass-manager get-all")
+		fmt.Println("./pass-manager help")
+		return
+	}
+
 	pm := passwords.NewPassword("passwords.json")
-	scanner := bufio.NewScanner(os.Stdin)
+	command := os.Args[1]
 
-	for {
-		fmt.Println("\nPassword Manager")
-		fmt.Println("1. List saved passwords")
-		fmt.Println("2. Save a new password")
-		fmt.Println("3. Retrieve a password")
-		fmt.Println("4. Exit")
-
-		fmt.Print("Choose an option: ")
-		scanner.Scan()
-		option := scanner.Text()
-
-		switch option {
-		case "1":
-			names := pm.ListPasswords()
-			if len(names) == 0 {
-				fmt.Println("No passwords saved.")
-			} else {
-				fmt.Println("Saved passwords:")
-				for _, name := range names {
-					fmt.Println("-", name)
-				}
-			}
-		case "2":
-			fmt.Print("Enter name: ")
-			scanner.Scan()
-			name := scanner.Text()
-
-			fmt.Print("Enter password: ")
-			scanner.Scan()
-			password := scanner.Text()
-
-			pm.SavePassword(name, password)
-		case "3":
-			fmt.Print("Enter name: ")
-			scanner.Scan()
-			name := scanner.Text()
-
-			password, exists := pm.GetPassword(name)
-			if !exists {
-				fmt.Println("Password not found.")
-			} else {
-				fmt.Printf("Password for %s: %s\n", name, password)
-			}
-		case "4":
-			fmt.Println("Exiting...")
+	switch command {
+	case "set":
+		if len(os.Args) != 4 {
+			fmt.Println("Usage: ./pass-manager set <name> <password>")
 			return
-		default:
-			fmt.Println("Invalid option, please try again.")
 		}
+		name := os.Args[2]
+		password := os.Args[3]
+		pm.SavePassword(name, password)
+
+	case "get":
+		if len(os.Args) != 3 {
+			fmt.Println("Usage: ./pass-manager get <name>")
+			return
+		}
+		name := os.Args[2]
+		password, exists := pm.GetPassword(name)
+		if !exists {
+			fmt.Println("Password not found.")
+		} else {
+			fmt.Printf("Password for %s: %s\n", name, password)
+		}
+
+	case "get-all":
+		names := pm.ListPasswords()
+		if len(names) == 0 {
+			fmt.Println("No passwords saved.")
+		} else {
+			fmt.Println("Saved passwords:")
+			for _, name := range names {
+				fmt.Println("-", name)
+			}
+		}
+
+	case "help":
+		fmt.Println("Usage:")
+		fmt.Println("./pass-manager set <name> <password>")
+		fmt.Println("./pass-manager get <name>")
+		fmt.Println("./pass-manager get-all")
+		fmt.Println("./pass-manager help")
+
+	default:
+		fmt.Println("Unknown command. Use 'help' to see the list of available commands.")
 	}
 }
