@@ -14,7 +14,7 @@ import (
 func main() {
 	mux := http.NewServeMux()
 
-	connStr := os.Getenv("POSTGRES_CONN_STR")
+	connStr := os.Getenv("DATABASE_URL")
 	if connStr == "" {
 		connStr = "postgres://admin:anastasiya@db:5432/makeupdb"
 	}
