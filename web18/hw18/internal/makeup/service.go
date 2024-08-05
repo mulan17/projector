@@ -8,11 +8,11 @@ import (
 )
 
 type storage interface {
-    GetAllProducts() []Product
+    GetAllProducts() ([]Product, error)
     CreateProduct(p Product) error
-    CreateOrder(o Order)
-    GetAllOrders() []Order
-    GetProductByID(id string) (Product, bool)
+    CreateOrder(o Order) error
+    GetAllOrders() ([]Order, error)
+    GetProductByID(id string) (Product, error)
 }
 
 type Service struct {
@@ -27,25 +27,25 @@ func (s *Service) CreateProduct(p Product) error {
     return s.s.CreateProduct(p)
 }
 
-func (s *Service) GetAllProducts() []Product {
+func (s *Service) GetAllProducts() ([]Product, error) {
     return s.s.GetAllProducts()
 }
 
-func (s *Service) GetProductByID(id string) (Product, bool) {
+func (s *Service) GetProductByID(id string) (Product, error) {
     return s.s.GetProductByID(id)
 }
 
-func (s *Service) CreateOrder(o Order) {
-    s.s.CreateOrder(o)
+func (s *Service) CreateOrder(o Order) error {
+    return s.s.CreateOrder(o)
 }
 
-func (s *Service) GetAllOrders() []Order {
+func (s *Service) GetAllOrders() ([]Order, error) {
     return s.s.GetAllOrders()
 }
 
 func (s *Service) PlaceOrder(productID string, quantity int) (Order, error) {
-    product, found := s.s.GetProductByID(productID)
-    if !found {
+    product, err := s.s.GetProductByID(productID)
+    if err != nil {
         return Order{}, errors.New("product not found")
     }
 

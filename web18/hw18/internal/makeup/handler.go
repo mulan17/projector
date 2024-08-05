@@ -19,10 +19,10 @@ type CreateProductReqBody struct {
 
 type service interface {
     CreateProduct(p Product) error
-	GetAllProducts() []Product
-    GetProductByID(id string) (Product, bool)
-    CreateOrder(o Order)
-    GetAllOrders() []Order
+	GetAllProducts() ([]Product, error)
+    GetProductByID(id string) (Product, error)
+    CreateOrder(o Order) error
+    GetAllOrders() ([]Order, error)
 	PlaceOrder(productID string, quantity int) (Order, error)
 }
 
@@ -61,14 +61,14 @@ func (h Handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) ListProducts(w http.ResponseWriter, r *http.Request) {
-	products := h.s.GetAllProducts()
-
-	err := json.NewEncoder(w).Encode(products)
+	products, err := h.s.GetAllProducts()
 	if err != nil {
-		log.Debug().Err(err).Msg("Failed to encode products")
-		w.WriteHeader(http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(products)
 }
 
 func (h Handler) OrderProduct(w http.ResponseWriter, r *http.Request) {
@@ -97,12 +97,12 @@ func (h Handler) OrderProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) ListOrders(w http.ResponseWriter, r *http.Request) {
-	orders := h.s.GetAllOrders()
-
-	err := json.NewEncoder(w).Encode(orders)
+	orders, err := h.s.GetAllOrders()
 	if err != nil {
-		log.Debug().Err(err).Msg("Failed to encode orders")
-		w.WriteHeader(http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(orders)
 }
