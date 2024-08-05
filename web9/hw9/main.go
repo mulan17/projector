@@ -13,7 +13,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
 type Student struct {
@@ -71,7 +70,7 @@ func getStudentInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	idStr := strings.TrimPrefix(r.URL.Path, "/student/")
+	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "Wrong student ID", http.StatusBadRequest)
@@ -91,5 +90,6 @@ func getStudentInfo(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	http.Error(w, "Student not found", http.StatusNotFound)
 
 }
