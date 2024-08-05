@@ -10,11 +10,11 @@ type Product struct {
 }
 
 type Order struct {
-	ID         string `json:"ID"`
-	ProductID  string `json:"product ID"`
-	Quantity   int `json:"quantity"`
-	TotalPrice int `json:"total price"`
-	CreatedAt  time.Time `json:"created time"`
+	ID         string    `json:"ID" db:"id"`
+	ProductID  string    `json:"product_id" db:"product_id"`
+	Quantity   int       `json:"quantity" db:"quantity"`
+	TotalPrice int       `json:"total_price" db:"total_price"`
+	CreatedAt  time.Time `json:"created_at" db:"created_at"`
 }
 
 func NewProduct(id, name, description string, price int) Product {

@@ -18,9 +18,9 @@ func NewSQLStorage(db *sql.DB) *Storage {
 }
 
 func (s *Storage) CreateProduct(p Product) error {
-    _, err := s.db.Exec("INSERT INTO products (name, description, price) VALUES ($1, $2, $3)",
-        p.Name, p.Description, p.Price)
-    return err
+	_, err := s.db.Exec("INSERT INTO products (name, description, price) VALUES ($1, $2, $3)",
+		p.Name, p.Description, p.Price)
+	return err
 }
 
 func (s *Storage) GetAllProducts() ([]Product, error) {
@@ -58,4 +58,3 @@ func (s *Storage) GetAllOrders() ([]Order, error) {
 	}
 	return orders, nil
 }
-
