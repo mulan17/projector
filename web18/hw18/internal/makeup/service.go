@@ -1,10 +1,10 @@
 package makeup
 
 import (
-    "errors"
-    "time"
+	"fmt"
+	"time"
 
-    "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 )
 
 type storage interface {
@@ -24,34 +24,54 @@ func NewService(s storage) *Service {
 }
 
 func (s *Service) CreateProduct(p Product) error {
-    return s.s.CreateProduct(p)
+    if err := s.s.CreateProduct(p); err != nil {
+        return fmt.Errorf("creating product: %w", err)
+    }
+    return nil
 }
 
 func (s *Service) GetAllProducts() ([]Product, error) {
-    return s.s.GetAllProducts()
+    products, err := s.s.GetAllProducts()
+    if err != nil {
+        return nil, fmt.Errorf("getting all products: %w", err)
+    }
+    return products, nil
 }
 
 func (s *Service) GetProductByID(id string) (Product, error) {
-    return s.s.GetProductByID(id)
+    product, err := s.s.GetProductByID(id)
+    if err != nil {
+        return Product{}, fmt.Errorf("getting product by ID: %w", err)
+    }
+    return product, nil
 }
 
 func (s *Service) CreateOrder(o Order) error {
-    return s.s.CreateOrder(o)
+    if err := s.s.CreateOrder(o); err != nil {
+        return fmt.Errorf("creating order: %w", err)
+    }
+    return nil
 }
 
 func (s *Service) GetAllOrders() ([]Order, error) {
-    return s.s.GetAllOrders()
+    orders, err := s.s.GetAllOrders()
+    if err != nil {
+        return nil, fmt.Errorf("getting all orders: %w", err)
+    }
+    return orders, nil
 }
 
 func (s *Service) PlaceOrder(productID string, quantity int) (Order, error) {
     product, err := s.s.GetProductByID(productID)
     if err != nil {
-        return Order{}, errors.New("product not found")
+        return Order{}, fmt.Errorf("getting product by ID: %w", err)
     }
 
     totalPrice := s.getPrice(product) * quantity
     order := NewOrder(productID, quantity, totalPrice)
-    s.s.CreateOrder(order)
+    if err := s.s.CreateOrder(order); err != nil {
+        return Order{}, fmt.Errorf("creating order: %w", err)
+    }
 
     log.Info().Msgf("Order placed: %+v", order)
 
